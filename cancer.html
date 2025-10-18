@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cancer Severity Predictor</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { box-sizing: border-box; transition: all 0.3s ease; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      color: #0f172a;
+      margin: 0;
+      padding: 40px 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 1s ease-in-out;
+    }
+
+    /* 🎨 Background color classes for severity */
+    body.low {
+      background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+    }
+
+    body.medium {
+      background: linear-gradient(135deg, #fef9c3, #fef3c7);
+    }
+
+    body.high {
+      background: linear-gradient(135deg, #135891, #0a026e);
+    }
+
+    .wrap {
+      width: 90%;
+      max-width: 900px;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #0ea5a4;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      font-size: 14px;
+      color: #334155;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    input, select {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-size: 15px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #0ea5a4;
+      box-shadow: 0 0 0 3px rgba(14,165,164,0.2);
+      background: #fff;
+    }
+
+ button { 
+  
+   
+  text-align: center;
+  justify-content: center;
+    font-size: 15px ;
+    width:   400px  ;
+    height: 3em;
+    margin-top: 40px;
+ margin-left: 210px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    box-sizing: border-box;
+    border: none;
+    box-shadow:  6px 6px 12px #e3e3e3  ,-6px -6px 12px   #ffffff;
+    
+border-radius: 30em;
+z-index: 1;
+
+}
+ button::before { 
+    content: "";
+    width: 0;
+    height: 3em;
+    border-radius: 30em;
+    position: absolute;
+    top: 0;
+    left: 0; 
+    background-image: linear-gradient(to right, #a0c2f0 0% ,#2275f1 100%);
+    transition: 1.2s ease;
+    display: block;
+    z-index: -1;
+}
+button:hover::before{
+    width: 27em;
+ 
+}
+
+ .vector {
+    width: 100%;
+    background-color: #252839;
+    text-align: center;
+ }
+    .result {
+      margin-top: 28px;
+      padding: 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+      border: 1px solid #a7f3d0;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+
+    .pulse {
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 0 0 rgba(14,165,164, 0.4); }
+      to { box-shadow: 0 0 0 15px rgba(14,165,164, 0); }
+    }
+
+    .loader {
+      display: none;
+      margin-top: 10px;
+      text-align: center;
+      color: #0ea5a4;
+      font-weight: 500;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* ✨ Glowing effect for result */
+    .glow {
+      animation: glowEffect 1.5s ease-in-out forwards;
+    }
+
+    @keyframes glowEffect {
+      from { box-shadow: 0 0 0px rgba(0,0,0,0); }
+      to { box-shadow: 0 0 40px rgba(14,165,164,0.3); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🧠 Cancer Severity Predictor</h1>
+    <p>Enter patient data and click <strong>Predict</strong> — background changes based on severity.</p>
+
+    <form id="predictForm">
+      <label>Age<input type="number" step="0.1" name="Age" value="52"></label>
+      <label>Gender
+        <select name="Gender">
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      </label>
+      <label>Country_Region<input type="text" name="Country_Region" value="Egypt"></label>
+
+      <label>Genetic_Risk<input type="number" step="0.1" name="Genetic_Risk" value="0.7"></label>
+      <label>Air_Pollution<input type="number" step="0.1" name="Air_Pollution" value="45.0"></label>
+      <label>Alcohol_Use<input type="number" step="0.1" name="Alcohol_Use" value="1.2"></label>
+
+      <label>Smoking<input type="number" step="0.1" name="Smoking" value="2.5"></label>
+      <label>Obesity_Level<input type="number" step="0.1" name="Obesity_Level" value="28.3"></label>
+      <label>Treatment_Cost_USD<input type="number" step="0.01" name="Treatment_Cost_USD" value="15000"></label>
+
+      <label>Survival_Years<input type="number" step="0.1" name="Survival_Years" value="4.5"></label>
+
+      <label>Cancer_Type
+        <select name="Cancer_Type">
+          <option value="Lung">Lung</option>
+          <option value="Breast">Breast</option>
+          <option value="Liver">Liver</option>
+          <option value="Leukemia">Leukemia</option>
+          <option value="Skin">Skin</option>
+        </select>
+      </label>
+
+      <label>Cancer_Stage
+        <select name="Cancer_Stage">
+          <option value="Stage 0">Stage 0</option>
+          <option value="Stage I">Stage I</option>
+          <option value="Stage II" selected>Stage II</option>
+          <option value="Stage III">Stage III</option>
+          <option value="Stage IV">Stage IV</option>
+        </select>
+      </label>
+
+      <button type="button" id="predictBtn">🔍 Predict</button>
+      <div class="loader" id="loader">⏳ Predicting... Please wait</div>
+    </form>
+
+    <div id="output" class="result" style="display:none">
+      <h3>Results</h3>
+      <div id="summary"></div>
+      <pre id="raw"></pre>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('predictBtn');
+    const loader = document.getElementById('loader');
+    const output = document.getElementById('output');
+
+    btn.addEventListener('click', async () => {
+      const form = document.getElementById('predictForm');
+      const fd = new FormData(form);
+      const obj = {};
+      for (const [k, v] of fd.entries()) {
+        const num = Number(v);
+        obj[k] = isNaN(num) ? v : num;
+      }
+
+      loader.style.display = 'block';
+      btn.classList.add('pulse');
+
+      try {
+        const res = await fetch('http://127.0.0.1:8080/predict_severity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(obj)
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+
+        // Update output
+        output.style.display = 'block';
+        output.classList.add('glow');
+        document.getElementById('summary').innerHTML =
+  `<strong>Predicted Score:</strong> ${data.predicted_score.toFixed(3)}<br>` +
+  `<strong>Severity:</strong> ${data.severity_category}`;
+document.getElementById('raw').textContent = JSON.stringify(data, null, 2);
+
+ 
+document.body.classList.remove('low', 'medium', 'high');
+if (data.predicted_score < 3) document.body.classList.add('low');
+else if (data.predicted_score < 6) document.body.classList.add('medium');
+else document.body.classList.add('high');
+
+
+      } catch (err) {
+        alert('❌ Request failed:\n' + err.message);
+      } finally {
+        loader.style.display = 'none';
+        btn.classList.remove('pulse');
+      }
+    });
+  </script>
+</body>
+</html>
